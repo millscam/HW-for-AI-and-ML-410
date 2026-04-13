@@ -1,0 +1,341 @@
+Sign language gesture recognition - M1 cProfile report (full pipeline)
+========================================================================
+
+PHASE 1: Preprocessing (video-to-frame.py inner loop)
+Workload:
+  - cv2.VideoCapture read -> handsegment() -> cvtColor BGR2GRAY
+Runs profiled: 10 (each pass up to 200 frames); one warm-up pass before timer.
+Video: C:\Users\camdo\OneDrive\Documents\cursor projects\sign-language-gesture-recognition-master\sign-language-gesture-recognition-master\train_videos\001\001_001_001.mp4
+Sign-language repo: C:\Users\camdo\OneDrive\Documents\cursor projects\sign-language-gesture-recognition-master\sign-language-gesture-recognition-master
+
+
+--- Sort: cumulative time (includes callees) - top 25 ---
+         9741 function calls in 22.035 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       10    0.005    0.001   22.035    2.203 profile_sign_language_m1.py:67(work_once)
+       10    1.367    0.137   22.029    2.203 profile_sign_language_m1.py:44(preprocess_video_frames)
+      880    0.028    0.000   15.207    0.017 handsegment.py:9(handsegment)
+      880   10.319    0.012   10.319    0.012 {bitwise_and}
+      890    4.615    0.005    4.615    0.005 {method 'read' of 'cv2.VideoCapture' objects}
+     1760    4.262    0.002    4.262    0.002 {inRange}
+      880    0.699    0.001    0.699    0.001 {cvtColor}
+      880    0.536    0.001    0.536    0.001 {bitwise_or}
+       10    0.142    0.014    0.142    0.014 {method 'release' of 'cv2.VideoCapture' objects}
+     3520    0.063    0.000    0.063    0.000 {built-in method numpy.array}
+       10    0.000    0.000    0.000    0.000 {method 'isOpened' of 'cv2.VideoCapture' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+       10    0.000    0.000    0.000    0.000 _local.py:227(__str__)
+
+
+
+--- Sort: total time in function body (tottime) - top 25 ---
+         9741 function calls in 22.035 seconds
+
+   Ordered by: internal time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      880   10.319    0.012   10.319    0.012 {bitwise_and}
+      890    4.615    0.005    4.615    0.005 {method 'read' of 'cv2.VideoCapture' objects}
+     1760    4.262    0.002    4.262    0.002 {inRange}
+       10    1.367    0.137   22.029    2.203 profile_sign_language_m1.py:44(preprocess_video_frames)
+      880    0.699    0.001    0.699    0.001 {cvtColor}
+      880    0.536    0.001    0.536    0.001 {bitwise_or}
+       10    0.142    0.014    0.142    0.014 {method 'release' of 'cv2.VideoCapture' objects}
+     3520    0.063    0.000    0.063    0.000 {built-in method numpy.array}
+      880    0.028    0.000   15.207    0.017 handsegment.py:9(handsegment)
+       10    0.005    0.001   22.035    2.203 profile_sign_language_m1.py:67(work_once)
+       10    0.000    0.000    0.000    0.000 {method 'isOpened' of 'cv2.VideoCapture' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+       10    0.000    0.000    0.000    0.000 _local.py:227(__str__)
+
+
+
+--- Entries containing 'handsegment' (subset) ---
+         9741 function calls in 22.035 seconds
+
+   Ordered by: internal time
+   List reduced from 13 to 1 due to restriction <'handsegment'>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      880    0.028    0.000   15.207    0.017 handsegment.py:9(handsegment)
+
+
+
+Dominant kernel - Phase 1 (preprocess / roofline section below):
+  Python entry: handsegment.handsegment (per-frame), called from the frame loop in
+  video-to-frame.py. cProfile tottime is dominated by OpenCV C++ primitives:
+  cv2.bitwise_and (mask apply), cv2.inRange (HSV threshold), VideoCapture.read,
+  then cv2.cvtColor / cv2.bitwise_or. The appended section estimates bytes and
+  ops for roofline arithmetic intensity; cProfile itself does not print FLOPs.
+  Phases 2-3 (CNN spatial + RNN temporal) are appended after the roofline block.
+
+========================================================================
+Roofline / arithmetic intensity (ties cProfile to a *model*)
+========================================================================
+
+cProfile measures *time* only. FLOPs/bytes/AI below are *analytic estimates*
+for the real code path in handsegment.py + BGR2GRAY, so you can plot a point
+on a roofline. Integer ops are treated as 'work' like scalar FLOPs (common
+approximation for vision kernels on CPU).
+
+Frame geometry: H=1080, W=1920, pixels/frame=2073600
+Profiled passes: 10 runs x up to 200 frames/run => 2000 frame-pairs in timer
+
+Top functions by tottime (this run):
+  <bitwise_and>                                       tottime=  10.319s  ncalls=880
+  <method 'read' of 'cv2.VideoCapture' objects>       tottime=   4.615s  ncalls=890
+  <inRange>                                           tottime=   4.262s  ncalls=1760
+  preprocess_video_frames                             tottime=   1.367s  ncalls=10
+  <cvtColor>                                          tottime=   0.699s  ncalls=880
+  <bitwise_or>                                        tottime=   0.536s  ncalls=880
+  <method 'release' of 'cv2.VideoCapture' objects>    tottime=   0.142s  ncalls=10
+  <built-in method numpy.array>                       tottime=   0.063s  ncalls=3520
+  handsegment                                         tottime=   0.028s  ncalls=880
+  work_once                                           tottime=   0.005s  ncalls=10
+  <method 'isOpened' of 'cv2.VideoCapture' objects>   tottime=   0.000s  ncalls=10
+  <method 'disable' of '_lsprof.Profiler' objects>    tottime=   0.000s  ncalls=1
+
+Analytic model - per frame (see source comments for assumptions):
+  handsegment+mask pipeline     ~37324800.0 bytes, ~33177600.0 int-ops  => AI ~ 0.8889 ops/byte
+  cvtColor BGR2GRAY             ~8294400.0 bytes, ~10368000.0 int-ops  => AI ~ 1.2500 ops/byte
+  preprocess loop (hs + gray)   ~45619200.0 bytes, ~43545600.0 int-ops  => AI ~ 0.9545 ops/byte
+
+Combined loop AI (ops/byte): 0.9545
+
+Time share of major measured pieces (tottime, this profile):
+  cv2.bitwise_and                        10.32 s  ( 46.8% of summed lines)
+  cv2.inRange (sum)                       4.26 s  ( 19.3% of summed lines)
+  VideoCapture.read (decode+I/O)          4.61 s  ( 20.9% of summed lines)
+  cv2.cvtColor (BGR2GRAY)                 0.70 s  (  3.2% of summed lines)
+  cv2.bitwise_or                          0.54 s  (  2.4% of summed lines)
+  handsegment() Python wrapper            0.03 s  (  0.1% of summed lines)
+
+Dominant kernel for roofline (this workload):
+  The largest single *measured* bucket is usually cv2.bitwise_and (mask apply)
+  plus cv2.inRange (HSV thresholding). Together they implement the per-pixel
+  segmentation in handsegment.py — that is the compute+memory hot path for
+  preprocessing, not a generic benchmark.
+
+Order-of-magnitude achieved rates (whole profiled region, 2000 frames):
+  Using modeled bytes=45619200 x frames / sum(read+bitwise_and+inRange+cvtColor+bitwise_or+handsegment tottime):
+  Achieved ~4.257 Gops/s (int-ops as FLOP-equivalent)
+  Implied memory traffic ~4.460 GB/s if all modeled bytes go through DRAM once
+  (Decode in VideoCapture.read often has separate I/O; treat read time as I/O+decode.)
+
+To finish the chart: measure or look up your CPU's peak FP GFLOP/s (scalar/AVX)
+and sustained DRAM GB/s (e.g. Stream copy), then plot:
+  Performance = min(Peak, BW * AI)  vs  AI  (log-log optional).
+  Mark a point at (AI, achieved Gops/s) from the line above.
+
+
+
+========================================================================
+
+PHASE 2: CNN spatial path (same steps as predict_spatial.py)
+  load_graph -> read_tensor_from_image_file (decode/resize/normalize) -> predict (Session.run).
+Graph: minimal frozen model (Placeholder -> global-mean -> dense -> softmax)
+  with node names Placeholder / final_result as in the repo script.
+When retrained_graph.pb + train_frames/ exist, repeat this phase pointing the
+main profiler at those paths for Inception-class behavior.
+JPEG batch dir: C:\Users\camdo\OneDrive\Documents\cursor projects\codefest\cf02\profiling\_profile_scratch\spatial_frames\001
+Batch size: 4, timed repeats: 10
+
+--- cumulative (top 25) ---
+         91011 function calls (87880 primitive calls) in 1.020 seconds
+
+   Ordered by: cumulative time
+   List reduced from 335 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       20    0.005    0.000    0.776    0.039 session.py:1359(_do_run)
+       20    0.000    0.000    0.770    0.039 session.py:1405(_do_call)
+       20    0.000    0.000    0.770    0.039 session.py:1387(_run_fn)
+       20    0.000    0.000    0.748    0.037 session.py:1481(_call_tf_sessionrun)
+       20    0.748    0.037    0.748    0.037 {built-in method tensorflow.python.client._pywrap_tf_session.TF_SessionRun_wrapper}
+      230    0.088    0.000    0.136    0.001 ops.py:1251(_init)
+     10/1    0.000    0.000    0.090    0.090 session.py:1133(_run)
+      160    0.003    0.000    0.048    0.000 op_def_library.py:411(_ExtractInputsAndAttrs)
+      230    0.011    0.000    0.037    0.000 ops.py:1020(_create_c_op)
+       70    0.000    0.000    0.033    0.000 constant_tensor_conversion.py:23(_constant_tensor_conversion_function)
+       70    0.000    0.000    0.031    0.000 constant_op.py:177(constant)
+       70    0.000    0.000    0.031    0.000 constant_op.py:280(_constant_impl)
+       70    0.000    0.000    0.030    0.000 ops.py:277(_create_graph_constant)
+       20    0.000    0.000    0.022    0.001 session.py:1428(_extend_graph)
+       20    0.021    0.001    0.021    0.001 {built-in method tensorflow.python.client._pywrap_tf_session.ExtendSession}
+       10    0.000    0.000    0.015    0.002 math_ops.py:1460(_truediv_python3)
+       10    0.000    0.000    0.015    0.001 gen_math_ops.py:8145(real_div)
+2020/1220    0.001    0.000    0.014    0.000 {built-in method builtins.next}
+ 1010/610    0.001    0.000    0.010    0.000 contextlib.py:136(__enter__)
+       10    0.000    0.000    0.010    0.001 array_ops.py:1199(_autopacking_helper)
+       70    0.003    0.000    0.010    0.000 tensor_util.py:548(make_tensor_proto)
+       10    0.000    0.000    0.010    0.001 gen_array_ops.py:6718(pack)
+       20    0.000    0.000    0.009    0.000 session.py:1650(__exit__)
+      400    0.002    0.000    0.008    0.000 ops.py:4698(get_controller)
+       40    0.000    0.000    0.008    0.000 session.py:764(close)
+
+
+
+--- tottime (top 25) ---
+         91011 function calls (87880 primitive calls) in 1.020 seconds
+
+   Ordered by: internal time
+   List reduced from 335 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       20    0.748    0.037    0.748    0.037 {built-in method tensorflow.python.client._pywrap_tf_session.TF_SessionRun_wrapper}
+      230    0.088    0.000    0.136    0.001 ops.py:1251(_init)
+       20    0.021    0.001    0.021    0.001 {built-in method tensorflow.python.client._pywrap_tf_session.ExtendSession}
+      230    0.011    0.000    0.037    0.000 ops.py:1020(_create_c_op)
+       20    0.008    0.000    0.008    0.000 {built-in method tensorflow.python.client._pywrap_tf_session.TF_CloseSession}
+      230    0.007    0.000    0.007    0.000 {built-in method tensorflow.python.client._pywrap_tf_session.TF_FinishOperation}
+      230    0.006    0.000    0.006    0.000 {built-in method tensorflow.python.util._tf_stack.extract_stack}
+       20    0.005    0.000    0.776    0.039 session.py:1359(_do_run)
+    11380    0.003    0.000    0.006    0.000 {built-in method builtins.isinstance}
+    200/3    0.003    0.000    0.003    0.001 ops.py:1112(from_node_def)
+      230    0.003    0.000    0.003    0.000 {built-in method tensorflow.python.client._pywrap_tf_session.TF_NewOperation}
+     2130    0.003    0.000    0.006    0.000 dtypes.py:885(as_dtype)
+     2700    0.003    0.000    0.003    0.000 {built-in method builtins.getattr}
+      160    0.003    0.000    0.048    0.000 op_def_library.py:411(_ExtractInputsAndAttrs)
+      230    0.003    0.000    0.004    0.000 ops.py:991(_NodeDef)
+       70    0.003    0.000    0.010    0.000 tensor_util.py:548(make_tensor_proto)
+      230    0.003    0.000    0.005    0.000 ops.py:2773(_create_op_helper)
+      400    0.002    0.000    0.008    0.000 ops.py:4698(get_controller)
+      580    0.002    0.000    0.002    0.000 {built-in method tensorflow.python.client._pywrap_tf_session.TF_SetAttrValueProto}
+      160    0.002    0.000    0.007    0.000 op_def_library.py:317(_ExtractAttrProto)
+      920    0.002    0.000    0.002    0.000 dtypes.py:264(__eq__)
+       20    0.002    0.000    0.002    0.000 {built-in method tensorflow.python.client._pywrap_tf_session.TF_NewSessionRef}
+      440    0.002    0.000    0.003    0.000 op_def_library.py:816(value_to_attr_value)
+      460    0.002    0.000    0.005    0.000 ops.py:3317(name_scope)
+    230/8    0.002    0.000    0.001    0.000 traceback_utils.py:152(error_handler)
+
+
+
+Dominant kernel (typical): TensorFlow Session.run on the imported graph
+(MatMul/Softmax + input preprocessing in read_tensor_from_image_file:
+decode_jpeg, resize_bilinear, divide/subtract). Each batch opens a new tf.Session
+inside read_tensor_from_image_file and predict() in the repo code.
+
+--- stderr (warnings) ---
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1775854708.736264   33684 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1775854713.560384   33684 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:From C:\Users\camdo\OneDrive\Documents\cursor projects\codefest\cf02\profiling\_phase2_spatial_profile.py:25: The name tf.disable_v2_behavior is deprecated. Please use tf.compat.v1.disable_v2_behavior instead.
+
+WARNING:tensorflow:From C:\Users\camdo\AppData\Local\Programs\Python\Python313\Lib\site-packages\tensorflow\python\compat\v2_compat.py:98: disable_resource_variables (from tensorflow.python.ops.resource_variables_toggle) is deprecated and will be removed in a future version.
+Instructions for updating:
+non-resource variables are not supported in the long term
+WARNING:tensorflow:From C:\Users\camdo\OneDrive\Documents\cursor projects\codefest\cf02\profiling\_phase2_spatial_profile.py:39: convert_variables_to_constants (from tensorflow.python.framework.convert_to_constants) is deprecated and will be removed in a future version.
+Instructions for updating:
+This API was designed for TensorFlow v1. See https://www.tensorflow.org/guide/migrate for instructions on how to migrate your code to TensorFlow v2.
+WARNING:tensorflow:From C:\Users\camdo\AppData\Local\Programs\Python\Python313\Lib\site-packages\tensorflow\python\framework\convert_to_constants.py:946: extract_sub_graph (from tensorflow.python.framework.graph_util_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+This API was designed for TensorFlow v1. See https://www.tensorflow.org/guide/migrate for instructions on how to migrate your code to TensorFlow v2.
+WARNING:tensorflow:From C:\Users\camdo\AppData\Local\Programs\Python\Python313\Lib\site-packages\tensorflow\python\util\dispatch.py:1264: resize_bilinear (from tensorflow.python.ops.image_ops_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `tf.image.resize(...method=ResizeMethod.BILINEAR...)` instead.
+
+
+
+========================================================================
+
+PHASE 3: RNN temporal stage (rnn_train.py / rnn_utils.py equivalent)
+Implementation: TensorFlow Keras LSTM(256)+Dense(softmax), same shapes as
+  get_network_wide (201 x 64 features, 64 classes).
+Upstream rnn_train.py uses tflearn.DNN.fit; tflearn does not import on TF 2.13+.
+Timed passes: 10 x model.fit(..., epochs=1, batch_size=8) on synthetic pickle
+  matching the repo's pickled [features, gesture_id] stream.
+
+--- cumulative (top 25) ---
+         713351 function calls (670150 primitive calls) in 9.585 seconds
+
+   Ordered by: cumulative time
+   List reduced from 1150 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       70    0.001    0.000    7.267    0.104 trainer.py:237(function)
+       70    0.002    0.000    7.219    0.103 polymorphic_function.py:805(__call__)
+       70    0.001    0.000    7.213    0.103 polymorphic_function.py:852(_call)
+       70    0.001    0.000    7.207    0.103 tracing_compilation.py:125(call_function)
+       70    0.001    0.000    7.157    0.102 concrete_function.py:1267(_call_flat)
+       70    0.000    0.000    7.155    0.102 atomic_function.py:214(call_preflattened)
+       70    0.004    0.000    7.139    0.102 atomic_function.py:219(call_flat)
+       70    0.001    0.000    7.130    0.102 context.py:1680(call_function)
+       70    0.000    0.000    7.128    0.102 execute.py:28(quick_execute)
+       70    7.128    0.102    7.128    0.102 {built-in method tensorflow.python._pywrap_tfe.TFE_Py_Execute}
+      640    1.175    0.002    1.177    0.002 {built-in method tensorflow.python._pywrap_tfe.TFE_Py_FastPathExecute}
+9050/6390    0.007    0.000    0.904    0.000 {built-in method builtins.next}
+       90    0.000    0.000    0.856    0.010 trainer.py:763(__next__)
+       90    0.000    0.000    0.855    0.010 epoch_iterator.py:105(_enumerate_iterator)
+     1350    0.001    0.000    0.855    0.001 {built-in method builtins.iter}
+       40    0.001    0.000    0.854    0.021 dataset_ops.py:488(__iter__)
+       40    0.000    0.000    0.852    0.021 iterator_ops.py:670(__init__)
+       40    0.001    0.000    0.852    0.021 iterator_ops.py:713(_create_iterator)
+       40    0.000    0.000    0.841    0.021 gen_dataset_ops.py:3460(make_iterator)
+     1290    0.005    0.000    0.257    0.000 trace.py:178(wrapped)
+     1290    0.004    0.000    0.236    0.000 ops.py:742(convert_to_tensor)
+1450/1370    0.006    0.000    0.155    0.000 tensor_conversion_registry.py:164(convert)
+      540    0.002    0.000    0.147    0.000 weak_tensor_ops.py:140(wrapper)
+      400    0.005    0.000    0.136    0.000 tensor.py:1007(placeholder_value)
+       20    0.000    0.000    0.129    0.006 gen_math_ops.py:7994(_range)
+
+
+
+--- tottime (top 25) ---
+         713351 function calls (670150 primitive calls) in 9.585 seconds
+
+   Ordered by: internal time
+   List reduced from 1150 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       70    7.128    0.102    7.128    0.102 {built-in method tensorflow.python._pywrap_tfe.TFE_Py_Execute}
+      640    1.175    0.002    1.177    0.002 {built-in method tensorflow.python._pywrap_tfe.TFE_Py_FastPathExecute}
+   570/16    0.239    0.000    0.011    0.001 ops.py:1251(_init)
+      590    0.028    0.000    0.028    0.000 {built-in method tensorflow.python.util._tf_stack.extract_stack}
+      590    0.027    0.000    0.103    0.000 ops.py:1020(_create_c_op)
+32480/10440    0.022    0.000    0.038    0.000 options.py:720(__getattribute__)
+    65710    0.020    0.000    0.060    0.000 {built-in method builtins.isinstance}
+      590    0.018    0.000    0.018    0.000 {built-in method tensorflow.python.client._pywrap_tf_session.TF_FinishOperation}
+26300/26260    0.014    0.000    0.044    0.000 {built-in method builtins.getattr}
+       60    0.014    0.000    0.014    0.000 ops.py:728(tree_map)
+    12720    0.013    0.000    0.031    0.000 options.py:99(get_fn)
+   570/16    0.012    0.000    0.013    0.001 ops.py:1112(from_node_def)
+     4700    0.011    0.000    0.012    0.000 dtypes.py:264(__eq__)
+     6420    0.011    0.000    0.017    0.000 dtypes.py:885(as_dtype)
+      670    0.010    0.000    0.012    0.000 {built-in method tensorflow.python.client._pywrap_tf_session.TF_OperationGetAttrValueProto}
+    10800    0.010    0.000    0.010    0.000 {built-in method _abc._abc_instancecheck}
+     4080    0.010    0.000    0.010    0.000 context.py:1170(executing_eagerly)
+      240    0.009    0.000    0.009    0.000 {method 'astype' of 'numpy.ndarray' objects}
+     1440    0.009    0.000    0.009    0.000 {built-in method tensorflow.python.util._pywrap_utils.FlattenForData}
+    17730    0.009    0.000    0.011    0.000 {built-in method builtins.hasattr}
+   1240/1    0.009    0.000    0.000    0.000 traceback_utils.py:152(error_handler)
+     2060    0.009    0.000    0.009    0.000 {built-in method tensorflow.python.util._pywrap_utils.Flatten}
+7240/1340    0.007    0.000    0.016    0.000 {built-in method builtins.hash}
+      200    0.007    0.000    0.030    0.000 tensor_util.py:548(make_tensor_proto)
+      590    0.007    0.000    0.007    0.000 {built-in method tensorflow.python.client._pywrap_tf_session.TF_NewOperation}
+
+
+
+Dominant kernel (typical): backprop through LSTM + dense (tf.keras on CPU);
+expect heavy time under tensorflow/python and eigen kernels.
+
+--- stderr (warnings) ---
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1775854719.787909   15236 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1775854723.419439   15236 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+
+
+========================================================================
+End-to-end summary (three stages)
+========================================================================
+  Phase 1 - OpenCV / handsegment: per-pixel HSV masking (bitwise_and, inRange).
+  Phase 2 - predict_spatial-style: TF Session.run + decode/resize (graph inference).
+  Phase 3 - rnn_train-style: sequence classifier; profiled with Keras LSTM (tflearn
+    alternative documented in Phase 3 header).
+For Inception-sized graphs, replace the minimal Phase-2 .pb with retrained_graph.pb
+and point JPEGs at train_frames/ (extend _phase2_spatial_profile.py if needed).

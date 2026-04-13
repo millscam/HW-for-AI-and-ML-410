@@ -1,0 +1,17 @@
+metric,value,units,notes
+frame_height,1080,px,
+frame_width,1920,px,
+profiled_runs,10,,
+frames_per_run,200,,
+modeled_bytes_per_frame,45619200.0,B,analytic
+modeled_intops_per_frame,43545600.0,ops,analytic
+arithmetic_intensity_ops_per_byte,0.954545,ops/B,model for preprocess loop
+tottime_bitwise_and_s,10.3193,s,cProfile
+tottime_inRange_s,4.2616,s,cProfile
+tottime_videocapture_read_s,4.6145,s,cProfile
+tottime_cvtColor_s,0.6992,s,cProfile
+tottime_bitwise_or_s,0.5355,s,cProfile
+tottime_handsegment_py_s,0.027989,s,cProfile
+algo_time_sum_s,20.4582,s,sum decode+OpenCV+handsegment
+achieved_gops_per_s,4.257,Gop/s,total_frames*ops_pf/algo_time
+implied_gbytes_per_s,4.4598,GB/s,total_frames*bytes_pf/algo_time
