@@ -2,6 +2,9 @@
 
 This note supports the Codefest M1 roofline work for the **sign-language gesture recognition** pipeline. The **cProfile-dominant** work in the profiled loop is OpenCV inside `handsegment()` (especially `cv2.bitwise_and` with a mask) plus `cv2.cvtColor(..., BGR2GRAY)` right after, matching `video-to-frame.py` and `profile_sign_language_m1.py`.
 
+**Dominant kernel (runtime, M1 Phase 1):** **`cv2.bitwise_and`** — about **46.8%** of total cProfile wall time (~10.32 s of **22.04** s; `project_profile.txt`, `project_profile.csv`). In the analytic model here, that step is **3P/21P ≈ 14.3%** of modeled preprocess work ops (**21P** total); the two **`inRange`** passes account for **12P/21P ≈ 57.1%** of ops but less wall time than `bitwise_and`.
+
+
 **Dominant kernel (time):** masked segmentation and grayscale conversion on each full-color frame.
 
 - **Code:** `sign-language-gesture-recognition-master/handsegment.py` (`handsegment`) and the caller’s `cv2.cvtColor(seg, cv2.COLOR_BGR2GRAY)`.
