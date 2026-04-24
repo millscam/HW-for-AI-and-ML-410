@@ -1,4 +1,4 @@
-*** LLM A sonnet 4.6***
+###LLM A sonnet 4.6
 
 Compile (`iverilog -g2012 mac_llm_A.v`): exit 0, no errors or warnings.
 Sign-extension concern: `out+(a*b)` relied on implicit context-widening; fixed with explicit `logic signed [15:0] product` + `{{16{product[15]}},product}`.
@@ -64,7 +64,7 @@ ISSUE 3 (mac_llm_B.v line 16) — Size cast sign-extension is tool-dependent
 
 
 
-***LLM B opus 4.7***
+###LLM B opus 4.7
 Created `codefest/cf04/hdl/mac_llm_B.v` with the `mac` module matching your spec:
 
 - **Ports**: `clk`, `rst` (1-bit each), `a`/`b` (8-bit signed), `out` (32-bit signed).
@@ -174,7 +174,7 @@ mac_tb.v:61: $finish called at 66000 (1ps)
 **Cross-check:** `mac_llm_B.v` produces byte-identical simulation output to `mac_llm_A.sv` under the same `mac_tb.v` stimulus (compare the table above with the earlier "Simulation Results" section for `mac_llm_A.sv` — all seven `actual out` values match).
 
 
----- review ----
+###review
 
 ## Cross-file code review: `mac_llm_A.v` and `mac_llm_B.v`
 
