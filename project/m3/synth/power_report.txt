@@ -1,0 +1,69 @@
+================================================================================
+M3 Synthesis — Power Estimation Report
+Design  : synth_top  (2-lane BGR→grayscale + in-range threshold compute core)
+Run     : RUN_2026-05-22_05-04-01  (OpenLane 2 v2.3.10, Sky130 HD)
+Tool    : OpenROAD internal power analysis (vectorless, activity-based estimate)
+Corner  : nom_tt_025C_1v80  (nominal PVT, typical silicon, 25°C, 1.80 V)
+Source  : codefest/cf07/synth/metrics.csv  (power__* fields)
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 1 — Total Power Summary
+────────────────────────────────────────────────────────────────────────────────
+
+  Component         Value (W)          % of Total
+  ──────────────────────────────────────────────
+  Internal power    1.1702e-03  W       57.9 %
+  Switching power   8.5194e-04  W       42.1 %
+  Leakage power     1.1708e-08  W        0.0 %
+  ──────────────────────────────────────────────
+  Total power       2.0222e-03  W       100 %
+                    ≈ 2.02 mW
+  ──────────────────────────────────────────────
+
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 2 — IR Drop (Power Grid Integrity)
+Corner: nom_tt_025C_1v80
+────────────────────────────────────────────────────────────────────────────────
+
+  Net     Worst voltage (V)   Worst drop (V)   % of supply
+  ──────────────────────────────────────────────────────────
+  VPWR       1.79947           0.000531         0.030 %
+  VGND       0.00191           0.001915         0.106 %
+  ──────────────────────────────────────────────────────────
+
+  Power-grid violations : 0  (Magic DRC + OpenROAD PSM both clean)
+  IR drop is negligible for a design of this size; no VSRC_LOC_FILES were
+  provided (advisory warning only; irrelevant for non-tape-out prototype use).
+
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 3 — Context and Comparison
+────────────────────────────────────────────────────────────────────────────────
+
+  Clock frequency (achieved)  : 76.9 MHz  (13 ns period, all corners MET)
+  Throughput                  : 76.9 MHz × 2 lanes / (1920 × 1080) ≈ 74 fps
+  Software baseline (M1)      : ~40 fps  (OpenCV cvtColor + inRange, CPU)
+  Speedup over baseline       : ~1.85×
+
+  Power per frame             : 2.02 mW / 74 fps ≈ 27 µJ/frame
+  Power per pixel             : 2.02 mW / (76.9 MHz × 2) ≈ 13 nW/pixel·lane
+
+  Comparison to M2 single-lane compute core (estimated):
+  ────────────────────────────────────────────────────────────────
+  Metric              M2 (1-lane, 20 ns)    M3 (2-lane, 13 ns)
+  ────────────────────────────────────────────────────────────────
+  Clock period         20 ns (50 MHz)        13 ns (76.9 MHz)
+  Total power          ~0.75 mW (est.)       2.02 mW
+  Power increase       —                     ~2.7×
+  Throughput increase  —                     ~3.1×
+  Power efficiency     —                     better (more fps/mW)
+  ────────────────────────────────────────────────────────────────
+
+  Note: The power estimate is vectorless (OpenROAD uses a default switching
+  activity factor). Actual power will vary with input data activity.
+  A gate-level simulation with realistic BGR frame data would give a tighter
+  estimate; this is planned for M4.
+
+================================================================================

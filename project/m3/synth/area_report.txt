@@ -1,0 +1,129 @@
+================================================================================
+M3 Synthesis — Area Report
+Design  : synth_top  (2-lane BGR→grayscale + in-range threshold compute core)
+Run     : RUN_2026-05-22_05-04-01  (OpenLane 2 v2.3.10, Sky130 HD)
+PDK     : sky130A  /  sky130_fd_sc_hd (high-density standard-cell library)
+Sources : codefest/cf07/synth/synthesis/yosys_stat.json
+          codefest/cf07/synth/metrics.csv  (final/metrics.csv from run)
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 1 — Post-Techmap (Yosys)
+Tool: Yosys 0.46 (git sha1 e97731b9)
+────────────────────────────────────────────────────────────────────────────────
+
+  Cells (mapped)      : 1,088
+  Cell area           : 11,617.39 µm²
+  Wires               : 1,085
+  Wire bits           : 1,155
+  Ports (external)    : 16 ports / 86 port bits
+
+  Cell count by type:
+  ─────────────────────────────────────────────────────────────────────
+  Cell                            Count   Notes
+  ─────────────────────────────────────────────────────────────────────
+  sky130_fd_sc_hd__dfxtp_2          122   D flip-flops (pipeline registers)
+  sky130_fd_sc_hd__nand2_2          103   2-input NAND
+  sky130_fd_sc_hd__xnor2_2           86   2-input XNOR (multiplier carry bits)
+  sky130_fd_sc_hd__or2_2             84   2-input OR
+  sky130_fd_sc_hd__a21oi_2           65   AND-OR-INVERT (2-1)
+  sky130_fd_sc_hd__xor2_2            63   2-input XOR  (multiplier sum bits)
+  sky130_fd_sc_hd__and2_2            69   2-input AND
+  sky130_fd_sc_hd__and3_2            50   3-input AND
+  sky130_fd_sc_hd__o21a_2            38   OR-AND (2-1)
+  sky130_fd_sc_hd__a21o_2            34   AND-OR  (2-1)
+  sky130_fd_sc_hd__nor2_2            70   2-input NOR
+  sky130_fd_sc_hd__inv_2             26   Inverter
+  sky130_fd_sc_hd__mux2_1            22   2:1 Mux
+  sky130_fd_sc_hd__and2b_2           22   AND with inverted input
+  sky130_fd_sc_hd__o21ai_2           24   OR-AND-INVERT (2-1)
+  sky130_fd_sc_hd__a21boi_2          11   AND-OR-INVERT with inverted input
+  sky130_fd_sc_hd__o211a_2           12   OR-AND (2-1-1)
+  sky130_fd_sc_hd__or3b_2            10   3-input OR with inverted input
+  sky130_fd_sc_hd__a211o_2            6   AND-OR (2-1-1)
+  sky130_fd_sc_hd__a211oi_2           6   AND-OR-INVERT (2-1-1)
+  sky130_fd_sc_hd__a31o_2            17   AND-OR (3-1)
+  sky130_fd_sc_hd__or3_2             17   3-input OR
+  sky130_fd_sc_hd__nand2b_2          17   NAND with inverted input
+  sky130_fd_sc_hd__a21bo_2            7   AND-OR with inverted input
+  sky130_fd_sc_hd__o22a_2            10   OR-AND (2-2)
+  sky130_fd_sc_hd__o221a_2            7   OR-AND (2-2-1)
+  sky130_fd_sc_hd__o21ba_2            7   OR-AND with inverted input
+  sky130_fd_sc_hd__a22o_2             7   AND-OR (2-2)
+  sky130_fd_sc_hd__a221o_2            4   AND-OR (2-2-1)
+  sky130_fd_sc_hd__a22oi_2            4   AND-OR-INVERT (2-2)
+  sky130_fd_sc_hd__nand3_2            8   3-input NAND
+  sky130_fd_sc_hd__or4_2              4   4-input OR
+  sky130_fd_sc_hd__o211ai_2           4   OR-AND-INVERT (2-1-1)
+  sky130_fd_sc_hd__a2bb2o_2           3   AND-OR (2bb-2)
+  sky130_fd_sc_hd__a311o_2            2   AND-OR (3-1-1)
+  sky130_fd_sc_hd__a32o_2             2   AND-OR (3-2)
+  sky130_fd_sc_hd__a41o_2             2   AND-OR (4-1)
+  sky130_fd_sc_hd__a2111o_2           1   AND-OR (2-1-1-1)
+  sky130_fd_sc_hd__a2111oi_2          2   AND-OR-INVERT (2-1-1-1)
+  sky130_fd_sc_hd__a221oi_2           1   AND-OR-INVERT (2-2-1)
+  sky130_fd_sc_hd__a41oi_2            1   AND-OR-INVERT (4-1)
+  sky130_fd_sc_hd__and3b_2            2   AND with inverted input (3-in)
+  sky130_fd_sc_hd__and4_2             3   4-input AND
+  sky130_fd_sc_hd__nand3b_2           2   3-input NAND with inverted input
+  sky130_fd_sc_hd__nand4_2            1   4-input NAND
+  sky130_fd_sc_hd__nor3_2             1   3-input NOR
+  sky130_fd_sc_hd__nor4_2             1   4-input NOR
+  sky130_fd_sc_hd__o2111a_2           2   OR-AND (2-1-1-1)
+  sky130_fd_sc_hd__o21bai_2           5   OR-AND-INVERT with inverted input
+  sky130_fd_sc_hd__o22ai_2            3   OR-AND-INVERT (2-2)
+  sky130_fd_sc_hd__o2bb2a_2           2   OR-AND (2bb-2)
+  sky130_fd_sc_hd__o311a_2            3   OR-AND (3-1-1)
+  sky130_fd_sc_hd__o311ai_2           1   OR-AND-INVERT (3-1-1)
+  sky130_fd_sc_hd__o31a_2             5   OR-AND (3-1)
+  sky130_fd_sc_hd__o31ai_2            1   OR-AND-INVERT (3-1)
+  sky130_fd_sc_hd__o32a_2             3   OR-AND (3-2)
+  ─────────────────────────────────────────────────────────────────────
+  TOTAL                           1,088
+  ─────────────────────────────────────────────────────────────────────
+
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 2 — Post-PNR (OpenROAD final)
+Source: metrics.csv  (design__instance__* fields)
+────────────────────────────────────────────────────────────────────────────────
+
+  Stdcell instances   : 1,727   (includes CTS buffers, timing-repair buffers,
+                                 hold buffers added by OpenROAD)
+  Stdcell area        : 11,138.2 µm²
+  Fill cells          : 2,207   (density fill, not counted in logic area)
+  Tap cells           :   416
+
+  Instance breakdown (post-PNR):
+  ──────────────────────────────────────────────────────
+  Class                    Count   Description
+  ──────────────────────────────────────────────────────
+  Sequential (flip-flops)    122   pipeline registers
+  Multi-input combinational  940   logic gates
+  Inverters                   26   (from Yosys mapping)
+  Timing-repair buffers      191   inserted by OpenROAD post-routing
+  Clock buffers               19   CTS clock tree
+  Clock inverters             13   CTS clock tree
+  Hold buffers                 2   hold-slack repair
+  ──────────────────────────────────────────────────────
+  Total stdcell              1,727
+  ──────────────────────────────────────────────────────
+
+  Die area            : 181.46 × 192.18 µm  =  34,873 µm²
+  Core area           : 170.20 × 168.64 µm  =  28,702.5 µm²
+  Core utilization    : 38.8 %  (stdcell area / core area)
+  IO pads             : 88
+
+  Comparison to single-lane M2 compute core:
+  ──────────────────────────────────────────────────────────────────
+  Metric                  M2 (1-lane, 20 ns)   M3 (2-lane, 13 ns)
+  ──────────────────────────────────────────────────────────────────
+  Yosys cells             ~570                  1,088  (+91 %)
+  Yosys area (µm²)        ~5,861                11,617 (+98 %)
+  Post-PNR stdcell (µm²)  ~5,861                11,138 (+90 %)
+  Post-PNR instances      ~884                   1,727  (+95 %)
+  Core utilization        ~42.4 %               38.8 %  (FP_CORE_UTIL relaxed)
+  Throughput              ~24 fps               ~74 fps (+208 %)
+  ──────────────────────────────────────────────────────────────────
+
+================================================================================
