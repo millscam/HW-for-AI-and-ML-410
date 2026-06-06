@@ -84,8 +84,6 @@ Run from the **repository root** (folder containing `project/`).
 
 ```powershell
 .\project\m4\scripts\run_final_sim.ps1
-cd project\m4\sim
-python plot_final_waveform.py
 ```
 
 Expected last line in `sim/final_run.log`: `PASS -- all end-to-end checks passed`.
@@ -133,15 +131,3 @@ python project/m4/bench/plot_roofline_final.py
 | M3 integration + synthesis notes | `project/m3/README.md`, `project/m3/synthesis_notes.md` |
 
 
----
-
-## Submission tag
-
-Create and push the grader tag when the repo is ready:
-
-```bash
-git tag m4-submission
-git push origin m4-submission
-```
-
-(Checklist §1 — not a file in this folder.)
