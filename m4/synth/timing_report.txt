@@ -1,0 +1,121 @@
+================================================================================
+M4 Synthesis — Static Timing Analysis Report
+Design  : synth_top  (2-lane BGR→grayscale + in-range threshold compute core)
+Run     : RUN_2026-05-22_05-04-01  (OpenLane 2 v2.3.10, Sky130 HD)
+Config  : CLOCK_PERIOD=13 ns  MAX_FANOUT_CONSTRAINT=8  FP_CORE_UTIL=40
+Source  : project/m4/synth/config.json
+RTL     : project/m4/rtl/synth_top.sv  (2-lane; frozen signoff netlist)
+Reports : codefest/cf07/synth/sta/  (OpenLane Run 3: RUN_2026-05-22_05-04-01)
+Log     : project/m4/synth/openlane_run.log
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 1 — Post-PNR STA Summary (all 9 PVT corners)
+Source: 50-openroad-stapostpnr_summary.rpt
+────────────────────────────────────────────────────────────────────────────────
+
+┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+┃                      ┃ Hold     ┃ Reg to   ┃          ┃          ┃ of which  ┃ Setup    ┃           ┃          ┃           ┃ of which ┃           ┃          ┃
+┃                      ┃ Worst    ┃ Reg      ┃          ┃ Hold Vio ┃ reg to    ┃ Worst    ┃ Reg to    ┃ Setup    ┃ Setup Vio ┃ reg to   ┃ Max Cap   ┃ Max Slew ┃
+┃ Corner/Group         ┃ Slack    ┃ Paths    ┃ Hold TNS ┃ Count    ┃ reg       ┃ Slack    ┃ Reg Paths ┃ TNS      ┃ Count     ┃ reg      ┃ Violatio… ┃ Violati… ┃
+┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
+│ Overall              │  0.1318  │  0.1318  │  0.0000  │ 0        │ 0         │  3.3700  │  4.9234   │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ nom_tt_025C_1v80     │  0.3811  │  0.3811  │  0.0000  │ 0        │ 0         │  7.3593  │  8.8981   │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ nom_ss_100C_1v60     │  0.9780  │  0.9780  │  0.0000  │ 0        │ 0         │  3.4008  │  4.9989   │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ nom_ff_n40C_1v95     │  0.1353  │  0.1353  │  0.0000  │ 0        │ 0         │  8.7024  │  N/A      │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ min_tt_025C_1v80     │  0.3761  │  0.3761  │  0.0000  │ 0        │ 0         │  7.3773  │  8.9416   │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ min_ss_100C_1v60     │  0.9700  │  0.9700  │  0.0000  │ 0        │ 0         │  3.4149  │  5.0800   │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ min_ff_n40C_1v95     │  0.1318  │  0.1318  │  0.0000  │ 0        │ 0         │  8.7149  │  N/A      │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ max_tt_025C_1v80     │  0.3863  │  0.3863  │  0.0000  │ 0        │ 0         │  7.3433  │  8.8545   │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ max_ss_100C_1v60     │  0.9880  │  0.9880  │  0.0000  │ 0        │ 0         │  3.3700  │  4.9234   │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+│ max_ff_n40C_1v95     │  0.1390  │  0.1390  │  0.0000  │ 0        │ 0         │  8.6852  │  N/A      │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+└──────────────────────┴──────────┴──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
+
+  Clock period       : 13.000 ns (76.9 MHz)
+  Worst setup slack  : +3.3700 ns  @ max_ss_100C_1v60  → MET (27.5 % margin)
+  Worst hold slack   : +0.1318 ns  @ min_ff_n40C_1v95  → MET
+  Setup violations   : 0  across all 9 corners
+  Hold violations    : 0  across all 9 corners
+  Max-cap violations : 0
+  Max-slew violations: 0
+  Max-fanout DRVs    : 16  (all on CTS clock buffers; see critical_path.md §DRV)
+
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 2 — Pre-PNR STA Summary (post-synthesis, before placement & routing)
+Source: 08-openroad-staprepnr_summary.rpt
+────────────────────────────────────────────────────────────────────────────────
+
+┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┓
+┃                      ┃ Hold     ┃ Reg to   ┃          ┃          ┃ of which  ┃ Setup    ┃           ┃          ┃           ┃ of which ┃           ┃          ┃
+┃ Corner/Group         ┃ Worst    ┃ Reg      ┃ Hold TNS ┃ Hold Vio ┃ reg to    ┃ Worst    ┃ Reg to    ┃ Setup    ┃ Setup Vio ┃ reg to   ┃ Max Cap   ┃ Max Slew ┃
+┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━┩
+│ Overall              │  0.0469  │  0.0469  │  0.0000  │ 0        │ 0         │  2.5228  │  4.8706   │  0.0000  │ 0         │ 0        │ 0         │ 127      │
+│ nom_tt_025C_1v80     │  0.2153  │  0.2153  │  0.0000  │ 0        │ 0         │  6.9935  │  8.9037   │  0.0000  │ 0         │ 0        │ 0         │ 48       │
+│ nom_ss_100C_1v60     │  0.7002  │  0.7002  │  0.0000  │ 0        │ 0         │  2.5228  │  4.8706   │  0.0000  │ 0         │ 0        │ 0         │ 127      │
+│ nom_ff_n40C_1v95     │  0.0469  │  0.0469  │  0.0000  │ 0        │ 0         │  8.4750  │  N/A      │  0.0000  │ 0         │ 0        │ 0         │ 0        │
+└──────────────────────┴──────────┴──────────┴──────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┴───────────┴──────────┘
+
+  Note: 127 max-slew violations at pre-PNR nom_ss_100C_1v60 are expected.
+  OpenROAD's post-routing repair step (ResizerTimingPostCTS + detailed routing)
+  resolved all slew violations; post-PNR count = 0 across all corners.
+
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 3 — Worst-Case Critical Path Detail
+Source: 50-openroad-stapostpnr__max_ss_100C_1v60__checks.rpt
+Corner: max_ss_100C_1v60  (slow silicon, hot, low voltage — worst-case setup)
+────────────────────────────────────────────────────────────────────────────────
+
+Startpoint : g_in_0[3]  (input port, lane 0 green-channel bit 3)
+Endpoint   : _2008_     (sky130_fd_sc_hd__dfxtp_1, s1_g150_0 multiply-result register)
+Path type  : max (setup check)
+
+Fanout  Cap(fF)  Slew(ps)  Delay(ps)  Time(ps)  Description
+------  -------  --------  ---------  --------  -----------
+                               0.000     0.000   clock clk (rise edge)
+                               0.000     0.000   clock network delay (propagated)
+                               2.000     2.000 ^ input external delay
+     1    2.834    32.476    16.019     2.016   ^ g_in_0[3] (in)
+                             [via clkbuf_1 → clkbuf_2 → dlymetal6s2s_1 fanout chain]
+     6   22.840   202.122   305.876     2.484   ^ fanout175/X (clkbuf_2)
+     6   17.945   298.468   386.893     2.872   ^ fanout174/X (dlymetal6s2s_1)
+     2    5.577   133.529   217.740     3.090   v _1498_/Y  (nand2_1)
+     2    7.040   150.327   770.587     3.861   v _1514_/X  (mux2_1)       ← heaviest cell
+     3    8.255   170.446   303.539     4.165   v _1515_/Y  (xnor2_1)
+     1    1.829    63.102   395.666     4.561   v _1517_/X  (and3_1)
+     3    6.438   128.775   498.092     5.060   v _1518_/X  (or2_1)
+     4   12.912   288.729  1454.860     6.515   v _1523_/X  (or4_2)        ← heaviest cell
+     2    5.305   120.402   579.063     7.095   v _1568_/X  (or2_1)
+     2    4.165   236.785   313.252     7.408   ^ _1569_/Y  (a31oi_1)
+     3    6.593    96.167   365.072     7.774   v _1579_/X  (o21ba_1)
+     2    4.387    79.451   344.357     8.118   v _1589_/X  (and2b_1)
+     4   10.678   218.558   832.723     8.951   v _1591_/X  (or3_1)        ← heaviest cell
+     3    8.152   328.162   414.047     9.366   ^ _1596_/Y  (a21oi_1)
+     2    4.951   144.490   225.903     9.592   v _1600_/Y  (o21ai_1)
+     1    2.183    65.671   386.994     9.979   v _1601_/X  (and3_1)
+                             0.000     9.980   v _2008_/D  (dfxtp_1) — data arrival
+
+  Clock arrival (propagated):  13.000 + tree delay → 13.349 ns (required)
+  Setup time (dfxtp_1)      :  −0.256 ns
+  Clock uncertainty          :  −0.250 ns
+  ─────────────────────────────────────────────────────────────
+  Data arrival               :   9.980 ns
+  Data required              :  13.350 ns
+  Slack                      :  +3.370 ns  ✓ MET
+
+
+────────────────────────────────────────────────────────────────────────────────
+SECTION 4 — DRV Summary
+────────────────────────────────────────────────────────────────────────────────
+
+  Max-fanout violations : 16  (all on CTS clock buffers, limit=6)
+    Worst offender : clkbuf_0_clk/X  fanout=16  slack=−10
+    All violations are clock-tree buffers (clkbuf_0_clk, clkbuf_4_*_0_clk)
+    No data-net fanout violations.
+    Root cause: MAX_FANOUT_CONSTRAINT=8 does not govern CTS; the clock tree
+    synthesis step builds its own fanout budget independently.
+    Impact on timing: NONE — all 9 timing corners report 0 setup/hold violations.
+  Max-slew violations   : 0  (post-PNR)
+  Max-cap  violations   : 0  (post-PNR)
+================================================================================

@@ -1,0 +1,36 @@
+{
+  "primary": {
+    "source": "project/m4/synth/ (OpenLane RUN_2026-05-22_05-04-01)",
+    "label": "projected (post-synthesis f_clk, 2 lanes, 1 result/cycle)",
+    "dut": "synth_top (project/m4/rtl/synth_top.sv)",
+    "clk_period_ns": 13.0,
+    "f_clk_mhz": 76.9,
+    "lanes": 2,
+    "projection_formula": "fps = f_clk * lanes / (H*W); GOPS = 5 * lanes * f_clk_MHz / 1000",
+    "throughput_frames_per_s": 74.171,
+    "execution_time_ms_per_frame": 13.4824,
+    "throughput_gops": 0.769,
+    "arithmetic_intensity_flop_per_byte": 1.0,
+    "implied_stream_gbs": 0.769,
+    "power_w": 0.0020222,
+    "power_source": "project/m4/synth/power_report.txt",
+    "energy_uj_per_frame": 27.264
+  },
+  "sim_extrapolation": {
+    "source": "Icarus cycle benchmark (tb_bench_synth_top.sv)",
+    "label": "cycle-measured (sim) + extrapolation to full frame",
+    "rtl": "project\\m4\\rtl\\synth_top.sv",
+    "representative_n_pairs": 512,
+    "representative_cycles": 519,
+    "cycles_per_pair_observed": 1.0137,
+    "cycles_per_frame_extrapolated": 1050977,
+    "clk_period_ns": 13.0,
+    "f_clk_mhz": 76.92,
+    "execution_time_ms_per_frame": 13.6627,
+    "throughput_frames_per_s": 73.192,
+    "throughput_gops": 0.7589,
+    "arithmetic_intensity_flop_per_byte": 1.0,
+    "implied_stream_gbs": 0.7692,
+    "extrapolation": "519 cycles for 512 pairs; cycles/frame = (519/512)*(P/2)+2 = 1050977 @ 13.0 ns."
+  }
+}

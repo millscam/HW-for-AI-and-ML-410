@@ -1,0 +1,23 @@
+{
+  "source": "codefest/cf02/profiling/project_profile.txt",
+  "label": "M1 archival (one cProfile session over 10 sequential passes; not median-of-10 independent wall-clock runs)",
+  "measurement_note": "22.035 s total for 10 passes in one profile run (880 frames). See project/m1/sw_baseline.md for median-of-10 requirement.",
+  "platform": "AMD Ryzen 9 4900HS, Windows 11, Python 3.9.13",
+  "workload": "Phase-1 preprocess: VideoCapture.read + handsegment + cvtColor",
+  "frames_total": 880,
+  "frame_size": "1080x1920",
+  "execution_time_ms_total": 22035.0,
+  "execution_time_ms_per_frame": 25.04,
+  "throughput_frames_per_s": 39.9365,
+  "throughput_gops": 1.7391,
+  "throughput_gops_fused_5p": 0.4141,
+  "arithmetic_intensity_flop_per_byte": 0.9545,
+  "implied_dram_gbs": 1.8219,
+  "memory_rss_mb": null,
+  "kernel_matched_subset": {
+    "execution_time_ms_total": 2830.0,
+    "throughput_frames_per_s": 310.95,
+    "throughput_gops": 7.0927,
+    "arithmetic_intensity_flop_per_byte": 1.0
+  }
+}
